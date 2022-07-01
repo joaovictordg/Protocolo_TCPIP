@@ -1,0 +1,654 @@
+
+#include<stdio.h>
+#include<winsock2.h>
+#include<stdlib.h>
+#include<string.h>
+
+
+
+
+
+
+
+int main(int argc , char *argv[])
+{
+	setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stderr, NULL, _IONBF, 0);
+
+    WSADATA wsa;
+    SOCKET s;
+    struct sockaddr_in server;
+    char *message , server_reply[2000];
+    int recv_size;
+    char input_buffer[50];
+    int connection_fd;
+    char lerLA[2];
+     char var [6];
+     char sair[6];
+     char lerSA[2];
+     char leS[4];
+     char sentido[2];
+     char quantP[4];
+     char fin[2];
+     char lerG[2];
+    char IP[14];
+    char condCONEXAO='S';
+  
+   
+
+
+  
+    int i=0;
+    
+  do{
+    
+    printf("\nInitialising Winsock...");
+   if (WSAStartup(MAKEWORD(2,2),&wsa) != 0)
+    {
+        printf("Failed. Error Code : %d",WSAGetLastError());
+        return 1;
+    }
+
+    printf("Initialised.\n");
+
+    //Create a socket
+    if((s = socket(AF_INET , SOCK_STREAM , 0 )) == INVALID_SOCKET)
+    {
+        printf("Could not create socket : %d" , WSAGetLastError());
+    }
+    
+    printf("Socket created.\n");
+     
+    printf("Digite o endereco de IP: \n");
+    scanf("%s", IP);
+
+    //server.sin_addr.s_addr = inet_addr("172.20.233.53");
+    //server.sin_addr.s_addr = inet_addr("74.125.224.72");
+    server.sin_addr.s_addr = inet_addr(IP);
+    server.sin_family = AF_INET;
+    server.sin_port = htons( 8888 );
+      
+
+
+    //Connect to remote server
+    if (connect(s , (struct sockaddr *)&server , sizeof(server)) < 0)
+    {
+        puts("connect error");
+        return 1;
+    }
+
+    puts("Connected");
+     
+      
+     
+       printf("Digite G# para vizualizar o grupo: \n");
+        scanf("%s", lerG);
+          if(lerG[0]=='G' && lerG[1]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="G#";
+      
+        if( send(s , message , strlen(message) , 0) < 0)
+    {
+        puts("Send failed");
+        return 1;
+    }
+      puts("Data Send\n");
+
+       recv_size = recv(s , server_reply , 2000 , 0);
+      server_reply[recv_size] = '\0';
+      puts(server_reply);
+ 
+    }
+    
+    sair[0]=='\0';
+    sair[1]=='\0';
+    sair[2]=='\0';
+    sair[3]=='\0';
+    sair[4]=='\0';
+    /*if(IP!="192.168.1.10"){
+        do{
+        printf("Digite L para leitura ou A para atuar: \n");
+        scanf("%s",lerLA);
+         if(lerLA[0]=='L'){
+        printf("Digite 0 para a leitura do sensor ou 1 para a do atuador: ");
+        scanf("%s",lerSA);
+        printf("Digite o numero de leituras sucessivas de 1 ate 4: ");
+        scanf("%s",leS);
+        }
+         if(lerLA[0] =='A'){
+            printf("Digite 0 para sentido positivo ou 1 para sentido negativo: ");
+            scanf("%s",sentido);
+            printf("Digite a quantidade de passos desejada ate 32: ");
+            scanf("%s",quantP);
+        }
+        printf("Digite # para finalizar: ");
+        scanf("%s",fin);
+         if(fin[0]=='#'){
+            if(lerLA[0]=='L'){
+        var[0]=lerLA[0];
+        var[1]=lerSA[0];
+        var[2]=leS[0];
+        var[3]=leS[1];
+        var[4]=leS[2];
+        var[5]=fin[0];
+        var[6]='\0';
+          }
+        
+          
+          if(lerLA[0]=='A'){
+              var[0]=lerLA[0];
+              var[1]=sentido[0];
+              var[2]=quantP[0];
+              var[3]=quantP[1];
+              var[4]=quantP[2];
+              var[5]=fin[0];
+              var[6]='\0';
+             
+          }
+         
+            if( send(s , message=var , strlen(message) , 0) < 0)
+    {
+        puts("Send failed");
+        return 1;
+    }
+      puts("Data Send\n");
+          
+          
+   
+       recv_size = recv(s , server_reply , 2000 , 0);
+       server_reply[recv_size] = '\0';
+       puts(server_reply);
+              
+
+     printf("Digite C# para continuar ou EXIT# para encerrar a conexao: \n");
+     scanf("%s", sair);
+     }
+        }
+    while(sair[0]!='E' && sair[1]!='X'  && sair[2]!='I'  && sair[3]!='T'  && sair[4]!='#');
+
+      if(sair[0]=='E' && sair[1]=='X'  && sair[2]=='I'  && sair[3]=='T'  && sair[4]=='#' ){
+
+
+printf("Deseja se conectar novamente? 00000S# para sim --- 00000N# para nao: \n");
+scanf("%s", sair);
+  
+ if(sair[5]=='N') {
+   
+  return 0;
+    system("pause");
+
+  }
+  printf("Encerrando socket...\n");
+        closesocket(s);
+      WSACleanup(); 
+       
+    }
+        
+    
+    }*/
+  
+   do{
+   
+         printf("Digite L para leitura ou A para atuar: \n");
+        scanf("%s",lerLA);
+         if(lerLA[0]=='L'){
+        printf("Digite 0 para a leitura do sensor ou 1 para a do atuador: ");
+        scanf("%s",lerSA);
+        printf("Digite o numero de leituras sucessivas de 1 ate 4: ");
+        scanf("%s",leS);
+        }
+         if(lerLA[0] =='A'){
+            printf("Digite 0 para sentido positivo ou 1 para sentido negativo: ");
+            scanf("%s",sentido);
+            printf("Digite a quantidade de passos desejada ate 32: ");
+            scanf("%s",quantP);
+        }
+        printf("Digite # para finalizar: ");
+        scanf("%s",fin);
+         if(fin[0]=='#'){
+          if(lerLA[0]=='L'){
+        var[0]=lerLA[0];
+        var[1]=lerSA[0];
+        var[2]=leS[0];
+        var[3]=leS[1];
+        var[4]=leS[2];
+        var[5]=fin[0];
+          }
+        
+          
+          if(lerLA[0]=='A'){
+              var[0]=lerLA[0];
+              var[1]=sentido[0];
+              var[2]=quantP[0];
+              var[3]=quantP[1];
+              var[4]=quantP[2];
+              var[5]=fin[0];
+             
+          }
+            
+          }
+          
+       //Leitura atuador
+         if(var[0]=='L' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+      
+    message="L1001#";
+    
+    
+    } 
+        
+       
+	/* leitura do sensor */
+	
+    if(var[0]=='L' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+      
+    message="L0001#";
+    
+    
+    }
+    
+    
+    
+    if(var[0]=='L' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="L0002#";
+     
+    }
+    
+    if(var[0]=='L' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='3' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="L0003#";
+    
+    }
+    
+    if(var[0]=='L' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='4' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="L0004##";
+     
+    }
+    //FIM DA leitura do sensor 
+    
+    // Inicio do atuador sentido positivo
+    
+    if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0001#";
+    
+    }
+    
+    if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A0002#";
+    
+    }
+    
+    if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='3' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A0003#";
+   
+    }
+    
+    if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='4' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0004#";
+    }
+    
+    if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='5' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0005#";
+    }
+    
+    if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='6' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0006#";
+    }
+    
+    if(var[0]=='A' && var[1]=='0' && var[2]=='0' && var[3]=='0' && var[4]=='7' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0007#";
+    }
+     
+
+    
+    if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='8' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A0008#";
+    }
+    
+      if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='0' && var[4]=='9' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0009#";
+    }
+    
+      if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='0' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A0010#";
+    }
+    
+      if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A0011#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0012#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='3' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+message="A0013#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='4' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0014#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='5' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+message="A0015#";
+    }
+      if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='6' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0016#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='7' && var[5]=='#'){
+  message="A0017#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='8' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0018#";
+    }
+    
+        if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='1' && var[4]=='9' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+message="A0019#";
+    }
+    
+        if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='0' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0020#";
+    }
+    
+        if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+message="A0021#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0022#";
+    }
+    
+        if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='3' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0023#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='4' && var[5]=='#'){
+message="A0024#";
+
+    }
+    
+        if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='5' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+message="A0025#";
+    }
+    
+      if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='6' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0026#";
+    }
+    
+     if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='7' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0027#";
+    }
+    
+      if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='8' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A0028#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='2' && var[4]=='9' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+    message="A0029#";
+    }
+    
+       if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='3' && var[4]=='0' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A0030#";
+    }
+    
+     if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='3' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0031#";
+    }
+    
+     if(var[0]=='A' && var[1]=='0' && var[2]== '0' && var[3]=='3' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A0032#";
+    }
+    //Fim do sentido positivo
+    
+    //****INICIO DO SENTIDO NEGATIVO***
+    
+     if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A1001#";
+    }
+    
+    if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A1002#";
+    }
+    
+    if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='3' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A1003#";
+    }
+    
+    if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='4' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A1004#";
+    }
+    
+    if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='5' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A1005#";
+    }
+    
+    if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='6' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+    message="A1006#";
+    }
+    
+    if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='7' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="A1007#";
+    }
+    
+    if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='8' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="A1008#";
+    }
+    
+      if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='0' && var[4]=='9' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A1009#";
+    }
+    
+      if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='0' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="A1010#";
+    }
+    
+      if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+    message="A1011#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+    message="A1012#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='3' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A1013#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='4' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A1014#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='5' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+ message="A1015#";
+    }
+      if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='6' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A1016#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='7' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A1017#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='8' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A1018#";
+    }
+    
+        if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='1' && var[4]=='9' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A1019#";
+    }
+    
+        if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='0' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+    message="A1020#";
+    }
+    
+        if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A1021#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A1022#";
+    }
+    
+        if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='3' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+  message="A1023#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='4' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+    message="A1024#";
+    }
+    
+        if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='5' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+   message="A1025#";
+    }
+    
+      if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='6' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+      message="A1026#";
+    }
+    
+     if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='7' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+      message="A1027#";
+    }
+    
+      if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='8' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="A1028#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='2' && var[4]=='9' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="A1029#";
+    }
+    
+       if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='3' && var[4]=='0' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="A1030#";
+    }
+    
+    
+     if(var[0]=='A' && var[1]=='1' && var[2]=='0' && var[3]=='3' && var[4]=='1' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+      message="A1031#";
+    }
+    
+    
+     if(var[0]=='A' && var[1]=='1' && var[2]== '0' && var[3]=='3' && var[4]=='2' && var[5]=='#'){
+      //  printf("Enviando mensagem de retorno\n");
+     message="A1032#";
+    }
+    if( send(s , message , strlen(message) , 0) < 0)
+    {
+        puts("Send failed");
+        return 1;
+    }
+      puts("Data Send\n");
+       recv_size = recv(s , server_reply , 2000 , 0);
+       server_reply[recv_size] = '\0';
+       puts(server_reply);
+    //****FIM DO SENTIDO NEGATIO ATUADOR***
+  
+     printf("Digite C# para continuar ou EXIT# para encerrar a conexao: \n");
+     scanf("%s", sair);
+      if(sair[0]=='E' && sair[1]=='X'  && sair[2]=='I'  && sair[3]=='T'  && sair[4]=='#' ){
+          message="EXIT#";
+          send(s , message , strlen(message) , 0);
+           recv_size = recv(s , server_reply , 2000 , 0);
+       server_reply[recv_size] = '\0';
+       puts(server_reply);
+     
+  
+   }
+   }
+    while(sair[0]!='E' && sair[1]!='X'  && sair[2]!='I'  && sair[3]!='T'  && sair[4]!='#');
+
+  if(sair[0]=='E' && sair[1]=='X'  && sair[2]=='I'  && sair[3]=='T'  && sair[4]=='#' ){
+
+
+printf("Deseja se conectar novamente? 00000S# para sim --- 00000N# para nao: \n");
+scanf("%s", sair);
+  
+ if(sair[5]=='N') {
+   
+  return 0;
+    system("pause");
+
+  }
+  printf("Encerrando socket...\n");
+        closesocket(s);
+      WSACleanup(); 
+       
+    }
+    
+     
+
+  
+     
+    } while(sair[5]!='N');
+   
+  
+     }
+     
+
+
+
