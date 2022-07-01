@@ -1,0 +1,574 @@
+
+    #include <SPI.h>  
+    #include <Ethernet.h> 
+    #include <Stepper.h> 
+       
+    // Enter a MAC address, IP address and Portnumber for your Server below.  
+    // The IP address will be dependent on your local network:  
+    byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };  
+    IPAddress serverIP(192,168,0,124);  
+    int serverPort=8888;  
+    const int e1 = 6;
+    const int e2 = 7;
+    const int e3 = 8;
+    const int e4 = 9;
+    char vetC[3];
+     int temp1=0;
+    int temp2=0;
+    int temp3=0;
+    int temp4=0;
+    int j=0;
+    int contMOTOR = 0;
+    int contSENTIDO = 0;
+ 
+    const int ledPin = 13; //PINO DIGITAL UTILIZADO PELO LED
+
+    const int passosPorGiro=64;
+    Stepper mp(passosPorGiro,e1,e3,e2,e4);
+       
+    // Initialize the Ethernet server library  
+    // with the IP address and port you want to use  
+    EthernetServer server(serverPort);  
+    
+    void motor(int vel, int sentido,int loop,int tmp, int passos){
+    mp.setSpeed(vel);
+    for(int i=0;i<passos*loop;i++){
+    mp.step(passosPorGiro*sentido);
+    contMOTOR=passos;
+    contSENTIDO=sentido;
+   delay(tmp);
+  }
+    delay(tmp*2);
+  }
+  
+       
+    void setup()  
+    {  
+      
+      // start the serial for debugging  
+      Serial.begin(9600);  
+      // start the Ethernet connection and the server:  
+      Ethernet.begin(mac, serverIP);  
+      server.begin();  
+      Serial.println("Server started");//log  
+      pinMode(ledPin, OUTPUT); //DEFINE O PINO COMO SAÍDA
+  digitalWrite(ledPin, LOW); //LED INICIA DESLIGADO
+    }  
+       
+    void loop()  
+    {  
+      int sensorValue = analogRead(A0);
+      float voltage = sensorValue * (5.0 / 1023.0);
+      int temperatura = voltage/(0.1);
+     // Serial.println(temperatura);
+
+     ///Logica do sensor***
+            if(j==0){
+                  Serial.println("UNICA");
+                  Serial.println(temperatura);
+                  temp1=temperatura;
+                 }
+                  if(j==1){
+                    Serial.println("DUAS");
+                    if(temperatura==temp1){
+                  Serial.println(temperatura);
+                  Serial.println(temperatura);
+                    }else{
+                      Serial.println(temp1);
+                    Serial.println(temperatura);
+                    
+                    
+                 }
+                 temp2=temperatura;
+                  }
+                  if(j==2){
+                    Serial.println("TRES");
+                    if(temperatura==temp2){
+                  Serial.println(temp1);
+                  Serial.println(temperatura);
+                  Serial.println(temperatura);
+                  }else{
+                    Serial.println(temp1);
+                  Serial.println(temp2);
+                  Serial.println(temperatura);
+                  }
+                  temp3=temperatura;
+                 }
+                  if(j==3){
+                    Serial.println("QUATRO");
+                    if(temperatura==temp3){
+                  Serial.println(temp1);
+                  Serial.println(temp2);
+                  Serial.println(temp3);
+                  Serial.println(temperatura);
+                    }else{
+                      Serial.println(temp1);
+                  Serial.println(temp2);
+                  Serial.println(temp3);
+                  Serial.println(temperatura);
+                 }
+                 temp4=temperatura;
+                  }
+
+                 j++;
+                 if(j==4){
+                  j=0;
+                  
+                 }
+                 delay(1000);
+                 
+     
+      // listen for incoming clients  
+      EthernetClient client = server.available();  
+      if (client) {  
+           
+        String clientMsg ="";  
+        while (client.connected()) {  
+          if (client.available()) {
+             
+            char c = client.read();  
+            //Serial.print(c);  
+            clientMsg+=c;//store the recieved chracters in a string  
+            //if the character is an "end of line" the whole message is recieved  
+           
+            if (c == '#') {  
+             
+              
+              
+              
+              
+             Serial.println("Message from Client:"+clientMsg);//print it to the serial  
+              
+                
+            
+                 
+                 
+                  if(clientMsg=="G#"){
+                  client.println("GTP04#");
+                  delay(1);
+              }
+                if(clientMsg=="EXIT#"){
+                  client.println("EXIT#");
+                  delay(1);
+              }
+              
+              //***LEITURA DO SENSOR***
+              if(clientMsg=="L0001#"){
+                  client.print("T0");
+                  client.print(temp1);
+                  client.println("C#");
+                  delay(100);
+                 
+              }
+              
+              if(clientMsg=="L0002#"){
+                  client.print("T0");
+                  client.print(temp1);
+                  client.print("0");
+                  client.print(temp2);
+                  client.println("C#");
+                  delay(500);
+                  
+              }
+              
+              if(clientMsg=="L0003#"){
+                  client.print("T0");
+                  client.print(temp1);
+                  client.print("0");
+                  client.print(temp2);
+                  client.print("0");
+                  client.print(temp3);
+                  client.println("C#");
+                  delay(500);
+              }
+              
+              if(clientMsg=="L0004#"){
+                  client.print("T0");
+                  client.print(temp1);
+                  client.print("0");
+                  client.print(temp2);
+                  client.print("0");
+                  client.print(temp3);
+                  client.print("0");
+                  client.print(temp4);
+                  client.println("C#");
+                  delay(500);
+              }
+
+              //***LEITURA DO ATUADOR***
+               if(clientMsg=="L1001#"){
+                  client.print("P");
+                  if(contSENTIDO==1){
+                    client.print("0");
+                  }else{
+                    client.print("1");
+                  }
+                  client.print("0");
+                  if(contMOTOR<10){
+                    client.print("0");
+                  }
+                  client.print(contMOTOR);
+                  client.print("Z");
+                  client.println("#");
+                  delay(100);
+                 
+              }
+              
+              //SENTIDO POSITIVO motor
+              
+              if(clientMsg=="A0032#"){
+                  motor(500,1,1,0,32);
+                  client.println("P0032Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A0031#"){
+                  motor(500,1,1,0,31);
+                  client.println("P0031Z#");
+                 delay(100);
+              }
+               if(clientMsg=="A0030#"){
+                  motor(500,1,1,0,30);
+                  client.println("P0030Z#");
+                 delay(1);
+              }
+               if(clientMsg=="A0029#"){
+                  motor(500,1,1,0,29);
+                  client.println("P0029Z#");
+                delay(100);
+              }
+               if(clientMsg=="A0028#"){
+                  motor(500,1,1,0,28);
+                  client.println("P0028Z#");
+                 delay(100);
+              }
+               if(clientMsg=="A0027#"){
+                  motor(500,1,1,0,27);
+                  client.println("P0027Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0026#"){
+                  motor(500,1,1,0,26);
+                  client.println("P0026Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A0025#"){
+                  motor(500,1,1,0,25);
+                  client.println("P0025Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A0024#"){
+                  motor(500,1,1,0,24);
+                  client.println("P0024Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A0023#"){
+                  motor(500,1,1,0,23);
+                  client.println("P0023Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0022#"){
+                  motor(500,1,1,0,22);
+                  client.println("P0022Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0021#"){
+                  motor(500,1,1,0,21);
+                  client.println("P0021Z#");
+                 delay(1);
+              }
+              if(clientMsg=="A0020#"){
+                  motor(500,1,1,0,20);
+                   client.println("P0020Z#");
+                delay(1);
+              }
+              if(clientMsg=="A0019#"){
+                  motor(500,1,1,0,19);
+                   client.println("P0019Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0018#"){
+                  motor(500,1,1,0,18);
+                   client.println("P0018Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0017#"){
+                  motor(500,1,1,0,17);
+                   client.println("P0017Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A0016#"){
+                  motor(500,1,1,0,16);
+                   client.println("P0016Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A0015#"){
+                  motor(500,1,1,0,15);
+                   client.println("P0015Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0014#"){
+                  motor(500,1,1,0,14);
+                   client.println("P0014Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0013#"){
+                  motor(500,1,1,0,13);
+                   client.println("P0013Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A0012#"){
+                  motor(500,1,1,0,12);
+                   client.println("P0012Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A0011#"){
+                  motor(500,1,1,0,11);
+                   client.println("P0011Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A0010#"){
+                  motor(500,1,1,0,10);
+                  client.println("P0010Z#");
+               delay(100);
+              }
+              if(clientMsg=="A0009#"){
+                  motor(500,1,1,0,9);
+                  client.println("P0009Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A0008#"){
+                  motor(500,1,1,0,8);
+                  client.println("P0008Z#");
+                 delay(100);
+              }
+              
+              if(clientMsg=="A0007#"){
+                 
+                  motor(500,1,1,0,7);
+                 client.println("P0007Z#");
+                   delay(100);
+              }
+              
+              
+              if(clientMsg=="A0006#"){
+                  motor(500,1,1,0,6);
+                  client.println("P0006Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0005#"){
+                  motor(500,1,1,0,5);
+                  client.println("P0005Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0004#"){
+                  motor(500,1,1,0,4);
+                  client.println("P0004Z#");
+                delay(100);
+              }
+              if(clientMsg=="A0003#"){
+                  motor(500,1,1,0,3);
+                  client.println("P0003Z#");
+                delay(1);
+              }
+              if(clientMsg=="A0002#"){
+                  motor(500,1,1,0,2);
+                  client.println("P0002Z#");
+                delay(1);
+              }
+              if(clientMsg=="A0001#"){
+                  motor(500,1,1,0,1);
+                  client.println("P0001Z#");
+                delay(100);
+              }
+              
+              //**fim do sentido positivo do motor
+              
+              //INICIO SENTIDO NEGATIVO DO motor
+              
+                if(clientMsg=="A1032#"){
+                  motor(500,-1,1,0,32);
+                  client.println("P1032Z#");
+                  
+                  delay(100);
+              }
+              if(clientMsg=="A1031#"){
+                  motor(500,-1,1,0,31);
+          
+                 client.println("P1031Z#");
+                 Serial.println("P1031Z#");
+                  delay(100);
+              }
+              
+               if(clientMsg=="A1030#"){
+                  motor(500,-1,1,0,30);
+                  client.println("P1030Z#");
+
+                  delay(100);
+              }
+               if(clientMsg=="A1029#"){
+                  motor(500,-1,1,0,29);
+                  client.println("P1029Z#");
+                delay(100);
+              }
+               if(clientMsg=="A1028#"){
+                  motor(500,-1,1,0,28);
+                  client.println("P1028Z#");
+                 delay(100);
+              }
+               if(clientMsg=="A1027#"){
+                  motor(500,-1,1,0,27);
+                  client.println("P1027Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A1026#"){
+                  motor(500,-1,1,0,26);
+                  client.println("P1026Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A1025#"){
+                  motor(500,-1,1,0,25);
+                  client.println("P1025Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A1024#"){
+                  motor(500,-1,1,0,24);
+                  client.println("P1024Z#");
+
+                  delay(100);
+              }
+              if(clientMsg=="A1023#"){
+                  motor(500,-1,1,0,23);
+                  client.println("P1023Z#");
+               delay(100);
+              }
+              if(clientMsg=="A1022#"){
+                  motor(500,-1,1,0,22);
+                  client.println("P1022Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A1021#"){
+                  motor(500,-1,1,0,21);
+                  client.println("P1021Z#");
+                delay(100);
+              }
+              if(clientMsg=="A1020#"){
+                  motor(500,-1,1,0,20);
+                  client.println("P1020Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A1019#"){
+                  motor(500,-1,1,0,19);
+                  client.println("P1019Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A1018#"){
+                  motor(500,-1,1,0,18);
+                  client.println("P1018Z#");
+                delay(100);
+              }
+              if(clientMsg=="A1017#"){
+                  motor(500,-1,1,0,17);
+                  client.println("P1017Z#");
+                delay(100);
+              }
+              if(clientMsg=="A1016#"){
+                  motor(500,-1,1,0,16);
+                  client.println("P1016Z#");
+                delay(1);
+              }
+              if(clientMsg=="A1015#"){
+                  motor(500,-1,1,0,15);
+                  client.println("P1015Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A1014#"){
+                  motor(500,-1,1,0,14);
+                  client.println("P1014Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A1013#"){
+                  motor(500,-1,1,0,13);
+                  client.println("P1013Z#");
+                delay(100);
+              }
+              if(clientMsg=="A1012#"){
+                  motor(500,-1,1,0,12);
+                  client.println("P1011Z#");
+                delay(1);
+              }
+              if(clientMsg=="A1011#"){
+                  motor(500,-1,1,0,11);
+                  client.println("P1011Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A1010#"){
+                  motor(500,-1,1,0,10);
+                   client.println("P1010Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A1009#"){
+                  motor(500,-1,1,0,9);
+                   client.println("P1009Z#");
+                delay(100);
+              }
+              if(clientMsg=="A1008#"){
+                  motor(500,-1,1,0,8);
+                   client.println("P1008Z#");
+                delay(100);
+              }
+              if(clientMsg=="A1007#"){
+                  motor(500,-1,1,0,7);
+                  client.println("P1007Z#");
+                 
+                   delay(100);
+                  
+              }
+              if(clientMsg=="A1006#"){
+                  motor(500,-1,1,0,6);
+                  client.println("P1006#");
+                delay(100);
+              }
+              if(clientMsg=="A1005#"){
+                  motor(500,-1,1,0,5);
+                  client.println("P1005Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A1004#"){
+                  motor(500,-1,1,0,4);
+                  client.println("P1004Z#");
+                delay(1);
+              }
+              if(clientMsg=="A1003#"){
+                  motor(500,-1,1,0,3);
+                  client.println("P1003Z#");
+                 delay(100);
+              }
+              if(clientMsg=="A1002#"){
+                  motor(500,-1,1,0,2);
+                  client.println("P1002Z#");
+                  delay(100);
+              }
+              if(clientMsg=="A1001#"){
+                client.println("P1001Z#");
+                  motor(500,-1,1,0,1);
+                 delay(100);
+              }
+             
+             
+              clientMsg="";
+             
+            }
+            
+            
+            
+         
+          } 
+           
+        }
+         
+        // give the Client time to receive the data  
+        delay(100);  
+        // close the connection:  
+        client.stop();  
+      }  
+    }
